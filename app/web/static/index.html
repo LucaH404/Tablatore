@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tablatore AI</title>
+<script>
+  // tema scelto con il pulsante, applicato prima del disegno (niente lampo bianco); senza scelta segue il sistema
+  try { const t = localStorage.getItem("tema"); if (t === "dark" || t === "light") document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<link rel="stylesheet" href="/static/stile.css?v={{V}}">
+<script src="https://cdn.jsdelivr.net/npm/@coderline/alphatab@{{ALPHATAB}}/dist/alphaTab.min.js"></script>
+<script>window.ALPHATAB_VERSIONE = "{{ALPHATAB}}";</script>
+</head>
+<body>
+<header class="testata">
+  <div class="contenuto">
+    <div>
+      <h1>Tablatore AI</h1>
+      <p>Da un MP3 alla tablatura per chitarra: separazione, trascrizione, ritmo, diteggiatura e verifica di suonabilità.</p>
+    </div>
+    <button type="button" id="tema" class="pulsante-tema" aria-label="Cambia tema">☾ Scuro</button>
+  </div>
+</header>
+
+<main class="contenuto">
+  <section id="sezione-carica" class="scheda">
+    <h2>1. Carica il brano</h2>
+    <form id="modulo">
+      <label class="zona-file" id="zona-file">
+        <input type="file" id="file" accept=".mp3,audio/mpeg" required>
+        <span id="nome-file">Trascina qui un file MP3 o fai clic per sceglierlo</span>
+        <small id="limite-file"></small>
+      </label>
+      <div class="riga-opzioni">
+        <label>Accordatura
+          <select id="accordatura"></select>
+        </label>
+        <label>Sensibilità della trascrizione
+          <select id="sensibilita"></select>
+        </label>
+        <label>Stile della chitarra
+          <select id="stile"></select>
+        </label>
+        <label class="spunta" title="Unisce gli accordi riattaccati mentre stanno ancora suonando: tablatura più pulita, ma qualche colpo ripetuto vero può sparire">
+          <input type="checkbox" id="semplifica"> Semplifica le note ripetute</label>
+        <label class="spunta"><input type="checkbox" id="resoconto" checked> Resoconto scritto dall'IA (≈ $0,0003)</label>
+      </div>
+      <details class="sperimentale">
+        <summary>Opzioni sperimentali</summary>
+        <div class="riga-opzioni">
+          <label>Separatore della chitarra
+            <select id="separatore"></select>
+          </label>
+          <label class="spunta"><input type="checkbox" id="ripetizioni"> Confronta le ripetizioni dei riff</label>
+        </div>
+        <p class="tenue">RoFormer isola meglio le chitarre distorte (su un brano rock di prova: tablatura uguale a
+          quella di riferimento dal 64 al 70%, 75% insieme al confronto delle ripetizioni), ma è più lento
+          (~6 s per minuto di audio) e al primo uso scarica 700 MB. Se non trova la chitarra si usa Demucs.
+          I pesi del modello hanno licenza non dichiarata: solo per uso di studio.</p>
+      </details>
+      <button type="submit" id="avvia" class="primario">Crea la tablatura</button>
+      <p id="errore-carica" class="errore" hidden></p>
+    </form>
+  </section>
+
+  <section id="sezione-avanzamento" class="scheda" hidden>
+    <h2>2. Elaborazione <span id="cronometro" class="tenue"></span></h2>
+    <ol id="passi" class="passi"></ol>
+    <p id="coda" class="tenue" hidden></p>
+  </section>
+
+  <section id="sezione-stop" class="scheda avviso-forte" hidden>
+    <h2>Elaborazione interrotta</h2>
+    <p id="motivo-stop"></p>
+    <ul id="avvisi-stop" class="avvisi"></ul>
+    <button type="button" class="secondario" onclick="location.href='/'">Prova con un altro file</button>
+  </section>
+
+  <section id="sezione-risultato" hidden>
+    <div class="scheda">
+      <div class="titolo-risultato">
+        <h2 id="titolo-brano"></h2>
+        <button type="button" class="secondario piccolo" onclick="location.href='/'">Nuovo brano</button>
+      </div>
+      <div id="dati" class="etichette"></div>
+      <div id="avvisi-box" class="riquadro-avvisi">
+        <h3>Da sapere prima di suonare</h3>
+        <ul id="avvisi" class="avvisi"></ul>
+      </div>
+      <p id="resoconto-testo" class="resoconto"></p>
+      <details id="dettagli-decisioni">
+        <summary>Decisioni automatiche e tempi</summary>
+        <ul id="decisioni"></ul>
+        <p id="consumi" class="tenue"></p>
+      </details>
+    </div>
+
+    <div class="scheda barra-strumenti">
+      <div class="gruppo">
+        <button type="button" id="play" class="primario" disabled>▶ Ascolta</button>
+        <button type="button" id="stop" class="secondario" disabled>■</button>
+        <label>Velocità
+          <select id="velocita">
+            <option value="0.5">50%</option><option value="0.75">75%</option>
+            <option value="1" selected>100%</option>
+          </select>
+        </label>
+        <label>Suono
+          <select id="suono" title="Strumento usato dall'anteprima (General MIDI)">
+            <option value="25" selected>Chitarra acustica</option>
+            <option value="30">Chitarra elettrica distorta</option>
+          </select>
+        </label>
+        <span id="stato-player" class="tenue">lettore in caricamento…</span>
+      </div>
+      <div class="gruppo">
+        <label>Vista
+          <select id="vista">
+            <option value="Tab" selected>Solo tablatura</option>
+            <option value="ScoreTab">Tablatura + pentagramma</option>
+          </select>
+        </label>
+        <label>Accordatura
+          <select id="nuova-accordatura"></select>
+        </label>
+        <label>Stile
+          <select id="nuovo-stile"></select>
+        </label>
+        <label>Tempo
+          <select id="nuovo-tempo"></select>
+        </label>
+        <label class="spunta"><input type="checkbox" id="nuova-semplifica"> Semplifica</label>
+        <label class="spunta"><input type="checkbox" id="nuove-ripetizioni"> Ripetizioni</label>
+        <button type="button" id="riaccorda" class="secondario">Rifai la tablatura</button>
+      </div>
+      <div class="gruppo">
+        <button type="button" id="pdf" class="secondario">PDF</button>
+        <button type="button" id="png" class="secondario">Immagine PNG</button>
+        <span id="scaricamenti"></span>
+      </div>
+    </div>
+
+    <div class="scheda foglio">
+      <div id="caricamento-tab" class="tenue">Disegno la tablatura…</div>
+      <div id="alphatab"></div>
+    </div>
+  </section>
+
+  <section id="sezione-tutor" class="scheda">
+    <div class="titolo-tutor">
+      <h2>Chiedi al tutor</h2>
+      <button type="button" id="tutor-nuova" class="secondario piccolo" hidden>Nuova conversazione</button>
+    </div>
+    <p class="tenue" id="tutor-intro">Domande di teoria, tecnica o sull'uso dell'app. Risponde citando le schede della sua
+      base di conoscenza; se hai una tablatura aperta, conosce accordatura, tonalità, tempo e decisioni.</p>
+    <div id="tutor-messaggi" class="tutor-messaggi" aria-live="polite"></div>
+    <div class="tutor-esempi" id="tutor-esempi">
+      <button type="button" class="esempio">Che scala uso per improvvisare su questo brano?</button>
+      <button type="button" class="esempio">Come si fa il palm mute?</button>
+      <button type="button" class="esempio">Perché gli assoli escono peggio dei riff?</button>
+    </div>
+    <form id="tutor-modulo" class="tutor-modulo">
+      <input type="text" id="tutor-domanda" maxlength="600" autocomplete="off"
+             placeholder="Scrivi una domanda…" aria-label="Domanda per il tutor">
+      <button type="submit" id="tutor-invia" class="primario">Chiedi</button>
+    </form>
+    <p class="tenue piccola-nota" id="tutor-stato"></p>
+  </section>
+</main>
+
+<footer class="contenuto piede">
+  Trascrizione automatica e approssimativa: verifica sempre a orecchio. Solo per uso personale e di studio.
+  · Tablatura disegnata con <a href="https://alphatab.net" target="_blank" rel="noopener">alphaTab</a> (MPL-2.0).
+</footer>
+
+<script src="/static/esporta.js?v={{V}}"></script>
+<script src="/static/app.js?v={{V}}"></script>
+</body>
+</html>

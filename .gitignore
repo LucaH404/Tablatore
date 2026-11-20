@@ -1,0 +1,23 @@
+﻿.env
+# Diario di lavoro personale (note di sviluppo e di studio): resta solo in locale
+Appunti.md
+.venv/
+__pycache__/
+*.pyc
+output/
+# Indice locale del tutor (Qdrant su disco): si ricrea con "python -m app.tutor indicizza"
+dati/
+uploads/
+# Copie di sicurezza locali del codice prima delle prove (es. backup/2026-11-19_prima_due_chitarre)
+backup/
+# Registrazioni di brani protetti da copyright usate solo per i test locali
+tests/audio/reale/*.mp3
+# Screenshot delle tablature di riferimento (Songsterr) forniti dall'utente: contenuti protetti, solo uso locale
+scripts/songsterr-tabs/
+# Note trascritte da quelle tablature (riferimenti per misurare la qualità): stessi vincoli, solo uso locale.
+# Senza questi file gli script di valutazione non partono e i test che li usano vengono saltati.
+scripts/riferimento_*.py
+tests/audio/reale/gt_*.json
+# Banco di suoni dell'anteprima (31 MB): lo scarica lo script di inizializzazione (licenza accanto, tenuta)
+app/web/static/suoni/*.sf2
+app/web/static/suoni/*.parziale

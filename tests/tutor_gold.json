@@ -1,0 +1,32 @@
+{
+ "descrizione": "Domande di prova del tutor (Step 25): scheda attesa per le metriche di recupero (recall@k, MRR) e domande fuori tema per calibrare il guardrail. Scritte prima di guardare i risultati.",
+ "in_tema": [
+  {"domanda": "Come si legge una tablatura? Quale riga è la corda più acuta?", "fonte": "teoria/leggere_la_tablatura.md"},
+  {"domanda": "Cosa significa la x nella tab?", "fonte": "teoria/leggere_la_tablatura.md"},
+  {"domanda": "Che differenza c'è tra drop D e accordatura standard?", "fonte": "teoria/accordature.md"},
+  {"domanda": "Quali note ha la chitarra accordata in Eb standard?", "fonte": "teoria/accordature.md"},
+  {"domanda": "Perché un power chord non è né maggiore né minore?", "fonte": "teoria/power_chord_e_ottave.md"},
+  {"domanda": "Come si suona un'ottava con la corda in mezzo stoppata?", "fonte": "teoria/power_chord_e_ottave.md"},
+  {"domanda": "Come si fa l'accordo di La minore aperto?", "fonte": "teoria/accordi_di_base.md"},
+  {"domanda": "Cos'è un barrè?", "fonte": "teoria/accordi_di_base.md"},
+  {"domanda": "Che scala uso per improvvisare in La minore?", "fonte": "teoria/scale.md"},
+  {"domanda": "Qual è la relativa minore di Sol maggiore?", "fonte": "teoria/tonalita.md"},
+  {"domanda": "Cosa vuol dire 4/4 e quanto dura una croma?", "fonte": "teoria/ritmo_tempo_metro.md"},
+  {"domanda": "Come si fa il palm mute?", "fonte": "tecnica/palm_mute_e_stoppate.md"},
+  {"domanda": "Come faccio un bending intonato?", "fonte": "tecnica/bending_vibrato_slide.md"},
+  {"domanda": "Che differenza c'è tra hammer-on e pull-off?", "fonte": "tecnica/legato.md"},
+  {"domanda": "Come conviene studiare un brano nuovo dalla tab?", "fonte": "tecnica/come_studiare_un_brano.md"},
+  {"domanda": "Quali sono i passi che fa l'app per creare la tablatura?", "fonte": "app/come_funziona_il_tablatore.md"},
+  {"domanda": "Perché l'app ha dimezzato il tempo del mio brano?", "fonte": "app/avvisi_e_decisioni.md"},
+  {"domanda": "A cosa serve l'opzione Semplifica?", "fonte": "app/opzioni_della_pagina.md"},
+  {"domanda": "Perché gli assoli escono peggio dei riff nella tab?", "fonte": "app/limiti_della_trascrizione.md"},
+  {"domanda": "Posso pubblicare online la tab generata di una canzone famosa?", "fonte": "app/limiti_della_trascrizione.md"}
+ ],
+ "fuori_tema": [
+  "Qual è la capitale dell'Australia?",
+  "Scrivimi una ricetta per la carbonara",
+  "Chi ha vinto il campionato di calcio nel 2010?",
+  "Come si calcola la derivata di x al quadrato?",
+  "Consigliami un buon film di fantascienza"
+ ]
+}

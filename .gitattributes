@@ -1,0 +1,4 @@
+# Lo script per macOS/Linux deve restare con fine riga LF anche se il repository passa da Windows
+*.sh text eol=lf
+# Lo script PowerShell resta CRLF (Windows PowerShell 5.1)
+*.ps1 text eol=crlf
